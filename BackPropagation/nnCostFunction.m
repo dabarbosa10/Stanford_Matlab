@@ -30,14 +30,7 @@ J = 0;
 Theta1_grad = zeros(size(Theta1));
 Theta2_grad = zeros(size(Theta2));
 
-% ====================== YOUR CODE HERE ======================
-% Instructions: You should complete the code by working through the
-%               following parts.
-%
-% Part 1: Feedforward the neural network and return the cost in the
-%         variable J. After implementing Part 1, you can verify that your
-%         cost function computation is correct by verifying the cost
-%         computed in ex4.m
+
 %
 % Part 2: Implement the backpropagation algorithm to compute the gradients
 %         Theta1_grad and Theta2_grad. You should return the partial derivatives of
@@ -61,6 +54,8 @@ Theta2_grad = zeros(size(Theta2));
 %               the regularization separately and then add them to Theta1_grad
 %               and Theta2_grad from Part 2.
 %
+
+%================     FeedForward    ========================================
 bias1=ones(m,1);
 X=[bias1, X];
 Z2=X*Theta1';
@@ -70,19 +65,25 @@ bias2=ones(m,1);
 A2=[bias2, A2];
 Z3=A2*Theta2';
 A3=sigmoid(Z3);
-%=========================
+%========================= Encoding Vectors ==============================
 Encode=eye(num_labels);
-%=========================
+%========================= Supplementary variables ========================
 a=log(A3);
 b=log(1-A3);
-%=========================
+%========================= Computing cost =================================
 cost=0;
 for i=1:m
    cost=cost-(a(i,:)*Encode(y(i),:)'+b(i,:)*(1-Encode(y(i),:)'))  ;
 end
-J=cost/m;
-%=========================
-
+%==========================================================================
+%==========================================================================
+%===================    Regularization   ==================================
+The1=Theta1(:,2:end);
+The2=Theta2(:,2:end);
+a1=sum((The1(:)).^2);
+a2=sum((The2(:)).^2);
+reg=(a1+a2)/(2*m);
+J=(1/m)*cost+lambda*reg;
    
 
 
