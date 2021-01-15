@@ -25,3 +25,14 @@ initial_Theta2 = randInitializeWeights(hidden_layer_size, num_labels);
 
 % Unroll parameters
 initial_nn_params = [initial_Theta1(:) ; initial_Theta2(:)];
+
+%  Check gradients by running checkNNGradients
+lambda = 3;
+checkNNGradients(lambda);
+% Also output the costFunction debugging value 
+% This value should be about 0.576051
+debug_J  = nnCostFunction(nn_params, input_layer_size, hidden_layer_size, num_labels, X, y, lambda);
+fprintf('Cost at (fixed) debugging parameters (w/ lambda = 3): %f', debug_J);
+
+
+

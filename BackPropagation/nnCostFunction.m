@@ -31,40 +31,17 @@ Theta1_grad = zeros(size(Theta1));
 Theta2_grad = zeros(size(Theta2));
 
 
-%
-% Part 2: Implement the backpropagation algorithm to compute the gradients
-%         Theta1_grad and Theta2_grad. You should return the partial derivatives of
-%         the cost function with respect to Theta1 and Theta2 in Theta1_grad and
-%         Theta2_grad, respectively. After implementing Part 2, you can check
-%         that your implementation is correct by running checkNNGradients
-%
-%         Note: The vector y passed into the function is a vector of labels
-%               containing values from 1..K. You need to map this vector into a 
-%               binary vector of 1's and 0's to be used with the neural network
-%               cost function.
-%
-%         Hint: We recommend implementing backpropagation using a for-loop
-%               over the training examples if you are implementing it for the 
-%               first time.
-%
-% Part 3: Implement regularization with the cost function and gradients.
-%
-%         Hint: You can implement this around the code for
-%               backpropagation. That is, you can compute the gradients for
-%               the regularization separately and then add them to Theta1_grad
-%               and Theta2_grad from Part 2.
-%
-
 %================     FeedForward    ========================================
 bias1=ones(m,1);
-X=[bias1, X];
-Z2=X*Theta1';
+A1=[bias1, X];
+Z2=A1*Theta1';
 A2=sigmoid(Z2);
 %========================
 bias2=ones(m,1);
 A2=[bias2, A2];
 Z3=A2*Theta2';
 A3=sigmoid(Z3);
+
 %========================= Encoding Vectors ==============================
 Encode=eye(num_labels);
 %========================= Supplementary variables ========================
@@ -84,24 +61,21 @@ a1=sum((The1(:)).^2);
 a2=sum((The2(:)).^2);
 reg=(a1+a2)/(2*m);
 J=(1/m)*cost+lambda*reg;
-   
+%==========================================================================
+delta_3=zeros(m,num_labels);
+gprime=[ones(m,1) sigmoidGradient(Z2)];
+delta_2=zeros(m,hidden_layer_size+1);
+%%=================    Backprop ============================================
+for t=1:m
+    delta_3(t,:)=A3(t,:)-Encode(y(t),:);
+    delta_2(t,:)=(delta_3(t,:)*Theta2).*gprime(t,:);    
+end
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-% -------------------------------------------------------------
+Theta1_grad=(1/m)*(Theta1_grad+(delta_2(:,2:end))'*A1);
+Theta2_grad=(1/m)*(Theta2_grad+(delta_3)'*A2);
+%================ Regularization ==========================================
+Theta1_grad(:,2:end) = Theta1_grad(:,2:end) + (lambda/m)*(Theta1(:,2:end));
+Theta2_grad(:,2:end) = Theta2_grad(:,2:end) + (lambda/m)*(Theta2(:,2:end));
 
 % =========================================================================
 
